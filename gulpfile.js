@@ -14,6 +14,12 @@ gulp.task('serve', ['scss', 'js'], function() {
     server: {
       baseDir: './'
     }
+    /**
+     * If you already have a local server and you just need
+     * browserSync to watch. Delete `server: {}` and uncomment below.
+     * Be sure to update your localhost URL
+     * proxy: "localhost:7888"
+     */
   });
 
   gulp.watch('./scss/**/*.scss', ['scss']);
