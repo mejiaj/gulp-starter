@@ -6,8 +6,11 @@ var uglify = require('gulp-uglify');
 var sourcemaps = require('gulp-sourcemaps');
 var rename = require('gulp-rename');
 var notify = require('gulp-notify');
+var sassGlob = require('gulp-sass-glob');
+var babel = require('gulp-babel');
 var browserSync = require('browser-sync').create();
-// var babel = require('gulp-babel');
+
+const url = 'localhost:7888';
 
 gulp.task('serve', () => {
   browserSync.init({
@@ -18,7 +21,7 @@ gulp.task('serve', () => {
      * If you already have a local server and you just need
      * browserSync to watch. Delete `server: {}` and uncomment below.
      * Be sure to update your localhost URL
-     * proxy: "localhost:7888"
+     * proxy: url
      */
   });
 
@@ -31,13 +34,14 @@ gulp.task('scss', () => {
   return gulp
     .src('./scss/**/*.scss')
     .pipe(sourcemaps.init())
+    .pipe(sassGlob())
     .pipe(sass())
     .on(
       'error',
       notify.onError({
         title: 'SCSS Error',
-        message: 'Error: <%= error.message %>'
-      })
+        message: 'Error: <%= error.message %>',
+      }),
     )
     .pipe(sourcemaps.write())
     .pipe(autoprefixer())
@@ -51,20 +55,20 @@ gulp.task('js', () => {
     .pipe(sourcemaps.init())
     .pipe(
       babel({
-        presets: ['es2015']
-      })
+        presets: ['@babel/env'],
+      }),
     )
     .on(
       'error',
       notify.onError({
         title: 'JS Error',
-        message: 'Error: <%= error.message %>'
-      })
+        message: 'Error: <%= error.message %>',
+      }),
     )
     .pipe(concat('base.js'))
     .pipe(uglify())
     .pipe(sourcemaps.write('.'))
-    .pipe(gulp.dest('dist'))
+    .pipe(gulp.dest('dist/js'))
     .pipe(browserSync.stream());
 });
 
