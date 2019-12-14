@@ -1,15 +1,15 @@
-var gulp         = require('gulp');
-var sass         = require('gulp-sass');
+var gulp = require('gulp');
+var sass = require('gulp-sass');
 var autoprefixer = require('gulp-autoprefixer');
-var babel        = require('gulp-babel');
-var concat       = require('gulp-concat');
-var uglify       = require('gulp-uglify');
-var sourcemaps   = require('gulp-sourcemaps');
-var rename       = require('gulp-rename');
-var notify       = require('gulp-notify');
-var browserSync  = require('browser-sync').create();
+var concat = require('gulp-concat');
+var uglify = require('gulp-uglify');
+var sourcemaps = require('gulp-sourcemaps');
+var rename = require('gulp-rename');
+var notify = require('gulp-notify');
+var browserSync = require('browser-sync').create();
+// var babel = require('gulp-babel');
 
-gulp.task('serve', ['scss', 'js'], function() {
+gulp.task('serve', () => {
   browserSync.init({
     server: {
       baseDir: './'
@@ -22,38 +22,45 @@ gulp.task('serve', ['scss', 'js'], function() {
      */
   });
 
-  gulp.watch('./scss/**/*.scss', ['scss']);
-  gulp.watch('./js/**/*.js', ['js']);
+  gulp.watch('./scss/**/*.scss', gulp.series('scss'));
+  gulp.watch('./js/**/*.js', gulp.series('js'));
   gulp.watch('./*.html').on('change', browserSync.reload);
-
 });
 
-gulp.task('scss', function() {
-  return gulp.src('./scss/**/*.scss')
+gulp.task('scss', () => {
+  return gulp
+    .src('./scss/**/*.scss')
     .pipe(sourcemaps.init())
     .pipe(sass())
-    .on('error', notify.onError({
-      title: 'SCSS Error',
-      message: 'Error: <%= error.message %>'
-    }))
+    .on(
+      'error',
+      notify.onError({
+        title: 'SCSS Error',
+        message: 'Error: <%= error.message %>'
+      })
+    )
     .pipe(sourcemaps.write())
-    .pipe(autoprefixer({
-      browsers: ['last 3 versions']
-    }))
-    .pipe(gulp.dest('dist'))
+    .pipe(autoprefixer())
+    .pipe(gulp.dest('dist/css'))
     .pipe(browserSync.stream());
 });
 
-gulp.task('js', function() {
-  return gulp.src('./js/**/*.js')
+gulp.task('js', () => {
+  return gulp
+    .src('./js/**/*.js')
     .pipe(sourcemaps.init())
-    .pipe(babel({
-      presets: ['es2015']
-    }))
-    .on('error', notify.onError({
-      title: 'JS Error',
-      message: 'Error: <%= error.message %>'
-    }))
+    .pipe(
+      babel({
+        presets: ['es2015']
+      })
+    )
+    .on(
+      'error',
+      notify.onError({
+        title: 'JS Error',
+        message: 'Error: <%= error.message %>'
+      })
+    )
     .pipe(concat('base.js'))
     .pipe(uglify())
     .pipe(sourcemaps.write('.'))
@@ -61,10 +68,9 @@ gulp.task('js', function() {
     .pipe(browserSync.stream());
 });
 
-gulp.task('optimize-images', function() {
-  gulp.src('./img/**/*', {base: '.'})
-    .pipe(imagemin());
-});
+// gulp.task('optimize-images', () => {
+//   gulp.src('./img/**/*', { base: '.' }).pipe(imagemin());
+// });
 
-gulp.task('default', ['serve']);
-gulp.task('img', ['optimize-images']);
+gulp.task('default', gulp.series('serve'));
+// gulp.task('img', gulp.series('optimize-images'));
