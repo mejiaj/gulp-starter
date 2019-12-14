@@ -59,6 +59,9 @@ gulp.task('js', () => {
         globals: ['jQuery', '$'],
         envs: ['browser'],
         extends: 'eslint:recommended',
+        rules: {
+          'arrow-body-style': 0 // Need to remove this once I find a proper linter or example config.
+        }
       }),
     )
     .pipe(eslint.format())
