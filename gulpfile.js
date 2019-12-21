@@ -7,17 +7,19 @@ var sourcemaps = require('gulp-sourcemaps');
 var rename = require('gulp-rename');
 var notify = require('gulp-notify');
 var sassGlob = require('gulp-sass-glob');
+var cleanCSS = require('gulp-clean-css');
 var babel = require('gulp-babel');
 var eslint = require('gulp-eslint');
 var browserSync = require('browser-sync').create();
 
 const url = 'localhost:7888';
+sass.compiler = require('dart-sass');
 
 gulp.task('serve', () => {
   browserSync.init({
     server: {
-      baseDir: './'
-    }
+      baseDir: './',
+    },
     /**
      * If you already have a local server and you just need
      * browserSync to watch. Delete `server: {}` and uncomment below.
@@ -36,7 +38,11 @@ gulp.task('scss', () => {
     .src('./scss/**/*.scss')
     .pipe(sourcemaps.init())
     .pipe(sassGlob())
-    .pipe(sass())
+    .pipe(
+      sass({
+        includePaths: ['./node_modules'],
+      }),
+    )
     .on(
       'error',
       notify.onError({
@@ -46,6 +52,7 @@ gulp.task('scss', () => {
     )
     .pipe(sourcemaps.write())
     .pipe(autoprefixer())
+    .pipe(cleanCSS({ compatibility: 'ie11' }))
     .pipe(gulp.dest('dist/css'))
     .pipe(browserSync.stream());
 });
@@ -60,8 +67,8 @@ gulp.task('js', () => {
         envs: ['browser'],
         extends: 'eslint:recommended',
         rules: {
-          'arrow-body-style': 0 // Need to remove this once I find a proper linter or example config.
-        }
+          'arrow-body-style': 0, // Need to remove this once I find a proper linter or example config.
+        },
       }),
     )
     .pipe(eslint.format())
