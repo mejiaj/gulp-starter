@@ -1,5 +1,6 @@
 var gulp = require('gulp');
 var sass = require('gulp-sass');
+var stylelint = require('gulp-stylelint');
 var autoprefixer = require('gulp-autoprefixer');
 var concat = require('gulp-concat');
 var uglify = require('gulp-uglify');
@@ -36,6 +37,17 @@ gulp.task('serve', () => {
 gulp.task('scss', () => {
   return gulp
     .src('./scss/**/*.scss')
+    .pipe(
+      stylelint({
+        reporters: [
+          {
+            formatter: 'verbose',
+            console: true,
+          },
+        ],
+        syntax: 'scss',
+      }),
+    )
     .pipe(sourcemaps.init())
     .pipe(sassGlob())
     .pipe(
