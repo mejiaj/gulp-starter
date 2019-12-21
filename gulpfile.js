@@ -1,20 +1,16 @@
+require('./build/sass');
+
 var gulp = require('gulp');
-var sass = require('gulp-sass');
-var stylelint = require('gulp-stylelint');
-var autoprefixer = require('gulp-autoprefixer');
 var concat = require('gulp-concat');
 var uglify = require('gulp-uglify');
 var sourcemaps = require('gulp-sourcemaps');
 var rename = require('gulp-rename');
 var notify = require('gulp-notify');
-var sassGlob = require('gulp-sass-glob');
-var cleanCSS = require('gulp-clean-css');
 var babel = require('gulp-babel');
 var eslint = require('gulp-eslint');
 var browserSync = require('browser-sync').create();
 
 const url = 'localhost:7888';
-sass.compiler = require('dart-sass');
 
 gulp.task('serve', () => {
   browserSync.init({
@@ -32,41 +28,6 @@ gulp.task('serve', () => {
   gulp.watch('./scss/**/*.scss', gulp.series('scss'));
   gulp.watch('./js/**/*.js', gulp.series('js'));
   gulp.watch('./*.html').on('change', browserSync.reload);
-});
-
-gulp.task('scss', () => {
-  return gulp
-    .src('./scss/**/*.scss')
-    .pipe(
-      stylelint({
-        reporters: [
-          {
-            formatter: 'verbose',
-            console: true,
-          },
-        ],
-        syntax: 'scss',
-      }),
-    )
-    .pipe(sourcemaps.init())
-    .pipe(sassGlob())
-    .pipe(
-      sass({
-        includePaths: ['./node_modules'],
-      }),
-    )
-    .on(
-      'error',
-      notify.onError({
-        title: 'SCSS Error',
-        message: 'Error: <%= error.message %>',
-      }),
-    )
-    .pipe(sourcemaps.write())
-    .pipe(autoprefixer())
-    .pipe(cleanCSS({ compatibility: 'ie11' }))
-    .pipe(gulp.dest('dist/css'))
-    .pipe(browserSync.stream());
 });
 
 gulp.task('js', () => {
