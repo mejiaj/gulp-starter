@@ -2,7 +2,8 @@
 
 ## Prerequisites
 
-- [Yarn](https://yarnpkg.com/en/docs/getting-started)
+- Node 14.16.1
+- Gulp 4.0.2
 
 ## Purpose
 
