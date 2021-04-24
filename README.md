@@ -12,7 +12,6 @@ This is an easy to use starter kit that does a few things like:
 - [x] Starts a dev server using Browsersync
 - [x] Compiles SCSS files w/ Sourcemaps
 - [x] Autoprefixes CSS
-- [x] Uses SASS Globbing to import multiple files at once
 - [x] Use Babel to use ES2015
 - [x] Concat + Uglify
 - [x] Optimize Images (separate gulp task)
