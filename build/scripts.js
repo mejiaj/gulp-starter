@@ -2,29 +2,27 @@ const gulp = require('gulp');
 const concat = require('gulp-concat');
 const uglify = require('gulp-uglify');
 const sourcemaps = require('gulp-sourcemaps');
-const rename = require('gulp-rename');
-const notify = require('gulp-notify');
 const babel = require('gulp-babel');
 const eslint = require('gulp-eslint');
 const browserSync = require('browser-sync').create();
 
-gulp.task('js-lint', () => {
+const esLintOpts = {
+  globals: ['jQuery', '$'],
+  envs: ['browser'],
+  extends: 'eslint:recommended',
+  rules: {
+    'arrow-body-style': 0, // Need to remove this once I find a proper linter or example config.
+  },
+};
+
+function jsLint() {
   return gulp
     .src('./js/**/*.js')
-    .pipe(
-      eslint({
-        globals: ['jQuery', '$'],
-        envs: ['browser'],
-        extends: 'eslint:recommended',
-        rules: {
-          'arrow-body-style': 0, // Need to remove this once I find a proper linter or example config.
-        },
-      }),
-    )
+    .pipe(eslint(esLintOpts))
     .pipe(eslint.format());
-});
+}
 
-gulp.task('js', () => {
+function jsCompile() {
   return gulp
     .src('./js/**/*.js')
     .pipe(sourcemaps.init())
@@ -33,18 +31,18 @@ gulp.task('js', () => {
         presets: ['@babel/env'],
       }),
     )
-    .on(
-      'error',
-      notify.onError({
-        title: 'JS Error',
-        message: 'Error: <%= error.message %>',
-      }),
-    )
+    .on('error', error)
     .pipe(concat('base.js'))
     .pipe(uglify())
     .pipe(sourcemaps.write('.'))
     .pipe(gulp.dest('dist/js'))
     .pipe(browserSync.stream());
-});
+}
 
-gulp.task('build-js', gulp.series('js', 'js-lint'));
+function jsBuild() {
+  return gulp.series('jsCompile', 'jsLint');
+}
+
+exports.jsLint = jsLint;
+exports.jsCompile = jsCompile;
+exports.jsBuild = jsBuild;

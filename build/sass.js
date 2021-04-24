@@ -1,12 +1,8 @@
 const gulp = require('gulp');
-const notify = require('gulp-notify');
 const browserSync = require('browser-sync').create();
-
-const sass = require('gulp-sass');
+const sass = require('gulp-dart-scss');
 const stylelint = require('gulp-stylelint');
 const autoprefixer = require('gulp-autoprefixer');
-const sassGlob = require('gulp-sass-glob');
-const cleanCSS = require('gulp-clean-css');
 const sourcemaps = require('gulp-sourcemaps');
 
 sass.compiler = require('dart-sass');
@@ -21,32 +17,26 @@ const lintReports = {
   syntax: 'scss',
 };
 
-gulp.task('scss-lint', () => {
+function sassLint() {
   return gulp.src('./scss/**/*.scss').pipe(stylelint(lintReports));
-});
+}
 
-gulp.task('scss', () => {
+function sassCompile() {
   return gulp
     .src('./scss/**/*.scss')
     .pipe(sourcemaps.init())
-    .pipe(sassGlob())
     .pipe(
       sass({
         includePaths: ['./node_modules'],
       }),
     )
-    .on(
-      'error',
-      notify.onError({
-        title: 'SCSS Error',
-        message: 'Error: <%= error.message %>',
-      }),
-    )
+    .on('error', console.log(error))
     .pipe(sourcemaps.write())
     .pipe(autoprefixer())
-    .pipe(cleanCSS({ compatibility: 'ie11' }))
     .pipe(gulp.dest('dist/css'))
     .pipe(browserSync.stream());
-});
+}
 
-gulp.task('build-scss', gulp.series('scss', 'scss-lint'));
+exports.sassLint = gulp.series(sassLint);
+exports.sassCompile = gulp.series(sassCompile);
+exports.sassBuild = gulp.series(sassCompile, sassLint);

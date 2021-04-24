@@ -1,13 +1,10 @@
-require('./build/sass');
-require('./build/scripts');
-
 const gulp = require('gulp');
-
 const browserSync = require('browser-sync').create();
-
 const url = 'localhost:7888';
+const { sassBuild } = require('./build/sass');
+const { jsBuild } = require('./build/scripts');
 
-gulp.task('serve', () => {
+function serve() {
   browserSync.init({
     server: {
       baseDir: './',
@@ -21,14 +18,14 @@ gulp.task('serve', () => {
     // proxy: url
   });
 
-  gulp.watch('./scss/**/*.scss', gulp.series('build-scss'));
-  gulp.watch('./js/**/*.js', gulp.series('build-js'));
+  gulp.watch('./scss/**/*.scss', gulp.series(sassBuild));
+  gulp.watch('./js/**/*.js', gulp.series(jsBuild));
   gulp.watch('./*.html').on('change', browserSync.reload);
-});
+}
 
-gulp.task('optimize-images', () => {
-  gulp.src('./img/**/*', { base: '.' }).pipe(imagemin());
-});
+function optimizeImages() {
+  return gulp.src('./img/**/*', { base: '.' }).pipe(imagemin());
+}
 
-gulp.task('default', gulp.series('serve'));
-gulp.task('img', gulp.series('optimize-images'));
+exports.optimizeImages = optimizeImages;
+exports.default = serve;
