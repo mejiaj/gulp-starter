@@ -22,11 +22,9 @@ This is an easy to use starter kit that does a few things like:
 - [ ] JS Imports
 - [ ] a11y test
 - [ ] Living Styleguide
-- [ ] Convert imaages to webP
+- [ ] Convert images to webP
 
 ## Getting Started
-
-Make sure you have yarn installed. Open terminal and run `yarn`. This will install all necessary packages.
 
 From there you can run `gulp` and start working. If you need to optimize images, that's a separate task `gulp img`.
 
